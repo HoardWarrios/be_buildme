@@ -32,7 +32,7 @@ const userSchema = new Schema({
     type: String,
     required: false,
   },
-  isBuilder: {
+  isSeller: {
     type: Boolean,
     default:false
   },
