@@ -3,10 +3,6 @@ const { Schema } = mongoose;
 
 const PlanSchema = new Schema(
   {
-    userId: {
-      type: String,
-      required: true,
-    },
     title: {
       type: String,
       required: true,
@@ -23,25 +19,29 @@ const PlanSchema = new Schema(
       type: [String],
       required: false,
     },
-    shortTitle: {
+    address: {
       type: String,
       required: true,
     },
-    shortDesc: {
-      type: String,
-      required: true,
-    },
-    deliveryTime: {
-      type: Number,
-      required: true,
-    },
-    revisionNumber: {
+    requestTime: {
       type: Number,
       required: true,
     },
     features: {
       type: [String],
       required: false,
+    },
+    gigId: {
+      type: String,
+      required: true,
+    },
+    sellerId: {
+      type: String,
+      required: true,
+    },
+    buyerId: {
+      type: String,
+      required: true,
     },
   },
   {

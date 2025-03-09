@@ -1,22 +1,44 @@
 import Plan from "../models/plan.model.js";
+import Gig from "../models/gig.model.js";
 import createError from "../utils/createError.js";
 
+  
+//CREATE PLAN FUNCTION
 export const createPlan = async (req, res, next) => {
   if (req.isSeller)
     return next(createError(403, "Only users can upload a plan!"));
 
+  const gig = await Gig.findById(req.params.id);
   const newPlan = new Plan({
     userId: req.userId,
+    gigId: gig._id,
+    sellerId: gig.userId,
     ...req.body,
   });
 
   try {
     const savedPlan = await newPlan.save();
+
+    await Conversation.findOneAndUpdate(
+          { id: req.body.conversationId },
+          {
+            $set: {
+              readBySeller: req.isSeller,
+              readByBuyer: !req.isSeller,
+              lastMessage: req.body.desc,
+            },
+          },
+          { new: true }
+        );
+    
+
     res.status(201).json(savedPlan);
   } catch (err) {
     next(err);
   }
 };
+
+//DELETE PLAN FUNCTION
 export const deletePlan = async (req, res, next) => {
   try {
     const plan = await Plan.findById(req.params.id);
@@ -29,6 +51,8 @@ export const deletePlan = async (req, res, next) => {
     next(err);
   }
 };
+
+//GET PLAN FUNCTION
 export const getPlan = async (req, res, next) => {
   try {
     const plan = await Plan.findById(req.params.id);
@@ -38,6 +62,8 @@ export const getPlan = async (req, res, next) => {
     next(err);
   }
 };
+
+//GET PLANS FUNCTION
 export const getPlans = async (req, res, next) => {
   const q = req.query;
   const filters = {
