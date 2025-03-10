@@ -27,6 +27,10 @@ const OrderSchema = new Schema(
       type: String,
       required: true,
     },
+    planId:{
+      type: String,
+      required: true,
+    },
     isCompleted: {
       type: Boolean,
       default: false,
