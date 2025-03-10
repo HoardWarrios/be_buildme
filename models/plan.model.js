@@ -3,6 +3,10 @@ const { Schema } = mongoose;
 
 const PlanSchema = new Schema(
   {
+    userId: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -36,10 +40,6 @@ const PlanSchema = new Schema(
       required: true,
     },
     sellerId: {
-      type: String,
-      required: true,
-    },
-    buyerId: {
       type: String,
       required: true,
     },

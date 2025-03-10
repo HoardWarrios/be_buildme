@@ -8,7 +8,7 @@ export const createPlan = async (req, res, next) => {
   if (req.isSeller)
     return next(createError(403, "Only users can upload a plan!"));
 
-  const gig = await Gig.findById(req.params.id);
+  const gig = await Gig.findById(req.params.gigId);
   const newPlan = new Plan({
     userId: req.userId,
     gigId: gig._id,
@@ -18,20 +18,6 @@ export const createPlan = async (req, res, next) => {
 
   try {
     const savedPlan = await newPlan.save();
-
-    await Conversation.findOneAndUpdate(
-          { id: req.body.conversationId },
-          {
-            $set: {
-              readBySeller: req.isSeller,
-              readByBuyer: !req.isSeller,
-              lastMessage: req.body.desc,
-            },
-          },
-          { new: true }
-        );
-    
-
     res.status(201).json(savedPlan);
   } catch (err) {
     next(err);
