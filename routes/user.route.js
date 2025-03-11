@@ -4,6 +4,7 @@ import { verifyToken } from "../middleware/jwt.js";
 
 const router = express.Router();
 
+//User route endpoints
 router.delete("/:id", verifyToken, deleteUser);
 router.get("/:id", getUser);
 

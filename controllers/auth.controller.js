@@ -3,9 +3,10 @@ import createError from "../utils/createError.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// REGISTRATION FUNCTION
 export const register = async (req, res, next) => {
   try {
-    const hash = bcrypt.hashSync(req.body.password, 5);
+    const hash = bcrypt.hashSync(req.body.password, 5);// Hashing the password 5:salt
     const newUser = new User({
       ...req.body,
       password: hash,
@@ -17,17 +18,19 @@ export const register = async (req, res, next) => {
     next(err);
   }
 };
+
+// LOGIN FUNCTION
 export const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ username: req.body.username });
 
     if (!user) return next(createError(404, "User not found!"));
 
-    const isCorrect = bcrypt.compareSync(req.body.password, user.password);
+    const isCorrect = bcrypt.compareSync(req.body.password, user.password);//compare user password
     if (!isCorrect)
       return next(createError(400, "Wrong password or username!"));
 
-    const token = jwt.sign(
+    const token = jwt.sign( // User JWT in as a .sign function of user
       {
         id: user._id,
         isSeller: user.isSeller,
@@ -36,9 +39,9 @@ export const login = async (req, res, next) => {
     );
 
     const { password, ...info } = user._doc;
-    res
+    res // send the token using cookie as "accessToken"
       .cookie("accessToken", token, {
-        httpOnly: true,
+        httpOnly: true,// Ensure data can be changed only using http requests
       })
       .status(200)
       .send(info);
@@ -47,10 +50,11 @@ export const login = async (req, res, next) => {
   }
 };
 
+//LOGOUT FUNCTION
 export const logout = async (req, res) => {
   res
     .clearCookie("accessToken", {
-      sameSite: "none",
+      sameSite: "none",//Ensure cookie clearing happens not in both local 8800 & 5173 only in one
       secure: true,
     })
     .status(200)
