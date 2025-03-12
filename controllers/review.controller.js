@@ -2,6 +2,7 @@ import createError from "../utils/createError.js";
 import Review from "../models/review.model.js";
 import Gig from "../models/gig.model.js";
 
+// CREATE REVIEW FUNTION
 export const createReview = async (req, res, next) => {
   if (req.isSeller)
     return next(createError(403, "Sellers can't create a review!"));
@@ -19,6 +20,7 @@ export const createReview = async (req, res, next) => {
       userId: req.userId,
     });
 
+    // If a review has been created already
     if (review)
       return next(
         createError(403, "You have already created a review for this gig!")
@@ -26,9 +28,9 @@ export const createReview = async (req, res, next) => {
 
     //TODO: check if the user purchased the gig.
 
-    const savedReview = await newReview.save();
+    const savedReview = await newReview.save();// Save the review
 
-    await Gig.findByIdAndUpdate(req.body.gigId, {
+    await Gig.findByIdAndUpdate(req.body.gigId, { // Get & Update gigID from gig model
       $inc: { totalStars: req.body.star, starNumber: 1 },
     });
     res.status(201).send(savedReview);
@@ -37,6 +39,7 @@ export const createReview = async (req, res, next) => {
   }
 };
 
+// GET REVIEW FUNTION
 export const getReviews = async (req, res, next) => {
   try {
     const reviews = await Review.find({ gigId: req.params.gigId });
@@ -45,6 +48,8 @@ export const getReviews = async (req, res, next) => {
     next(err);
   }
 };
+
+// DELETE  REVIEW FUNTION
 export const deleteReview = async (req, res, next) => {
   try {
   } catch (err) {

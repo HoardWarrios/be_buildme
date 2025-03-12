@@ -50,6 +50,38 @@ export const login = async (req, res, next) => {
   }
 };
 
+//RESET PASSWORD FUNCTION
+export const resetPassword = async (req, res, next) => {
+  try {
+
+    const { username, password, confirmPassword } = req.body;
+
+    //Get both password fields
+    if (!password || !confirmPassword) {
+      return next(createError(400, "Both password fields are required!"));
+    }
+  //Compare both passwords
+    if (password !== confirmPassword) {
+      return next(createError(400, "Passwords do not match!"));
+    }
+
+    const user = await User.findOne({ username });
+
+    //Check whether user exists
+    if (!user) return next(createError(404, "User not found!"));
+
+    //hash the password
+    const hash = bcrypt.hashSync(password, 5);
+    user.password = hash;
+    await user.save();//upadate the password
+
+    res.status(200).send("Password has been reset successfully.");
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 //LOGOUT FUNCTION
 export const logout = async (req, res) => {
   res
