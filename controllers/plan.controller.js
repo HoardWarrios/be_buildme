@@ -8,7 +8,10 @@ export const createPlan = async (req, res, next) => {
   if (req.isSeller)//Check if user is a seller
     return next(createError(403, "Only users can upload a plan!"));
 
+  //Get gigId from params
   const gig = await Gig.findById(req.params.gigId);
+
+  //Creating new plan
   const newPlan = new Plan({
     userId: req.userId,
     gigId: gig._id,
@@ -52,6 +55,7 @@ export const getPlan = async (req, res, next) => {
 //GET PLANS FUNCTION
 export const getPlans = async (req, res, next) => {
   const q = req.query;
+  //search filters for plans
   const filters = {
     ...(q.userId && { userId: q.userId }),
     ...(q.search && { title: { $regex: q.search, $options: "i" } }),

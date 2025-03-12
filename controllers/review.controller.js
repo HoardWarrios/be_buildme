@@ -7,6 +7,7 @@ export const createReview = async (req, res, next) => {
   if (req.isSeller)
     return next(createError(403, "Sellers can't create a review!"));
 
+  // Create new review
   const newReview = new Review({
     userId: req.userId,
     gigId: req.body.gigId,
