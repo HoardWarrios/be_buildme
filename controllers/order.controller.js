@@ -21,7 +21,7 @@ export const intent = async (req, res, next) => {
 
   const newOrder = new Order({
     gigId: gig._id,
-    img: gig.cover,
+    img: plan.cover,
     title: gig.title,
     buyerId: req.userId,
     sellerId: gig.userId,
