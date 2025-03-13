@@ -10,6 +10,8 @@ export const createMessage = async (req, res, next) => {
   });
   try {
     const savedMessage = await newMessage.save();
+
+    // For new conversation last message read buy seller/buyer
     await Conversation.findOneAndUpdate(
       { id: req.body.conversationId },
       {
