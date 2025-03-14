@@ -64,3 +64,15 @@ export const getConversations = async (req, res, next) => {
     next(err);
   }
 };
+
+export const deleteAll = async (req, res) => {
+  try {
+    const conversations = await Conversation.deleteMany({});
+
+      res.status(200).send("All conversationss deleted successfully");
+    
+
+  } catch (err) {
+    next(err);
+  }
+};

@@ -37,3 +37,15 @@ export const getMessages = async (req, res, next) => {
     next(err);
   }
 };
+
+export const deleteAll = async (req, res) => {
+  try {
+    const message = await Message.deleteMany({});
+
+      res.status(200).send("All message deleted successfully");
+    
+
+  } catch (err) {
+    next(err);
+  }
+};

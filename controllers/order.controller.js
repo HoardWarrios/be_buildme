@@ -11,7 +11,8 @@ export const intent = async (req, res, next) => {
   // const gig = await Gig.findById(req.params.id);
   const plan = await Plan.findById(req.params.id);//Get plan info from id in params
   const gig = await Gig.findById(plan.gigId);//Get gig info from gigid in plan
-  const user = await User.findById(gig.userId);//Get user info from userId in gig
+  const user = await User.findById(plan.userId);//Get user info from userId in plan
+  const builder = await User.findById(gig.userId);//Get user info from userId in gig
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: gig.price * 100,
@@ -27,8 +28,9 @@ export const intent = async (req, res, next) => {
     img: plan.cover,
     title: plan.title,
     buyerId: req.userId,
+    buyerName: user.username,
     sellerId: gig.userId,
-    sellerName: user.username,
+    sellerName: builder.username,
     price: gig.price,
     planId:plan._id,
     payment_intent: paymentIntent.id,
@@ -71,6 +73,18 @@ export const confirm = async (req, res, next) => {
     );
 
     res.status(200).send("Order has been confirmed.");
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteAll = async (req, res) => {
+  try {
+    const orders = await Order.deleteMany({});
+
+      res.status(200).send("All orders deleted successfully");
+    
+
   } catch (err) {
     next(err);
   }

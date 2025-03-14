@@ -31,6 +31,10 @@ const OrderSchema = new Schema(
       type: String,
       required: true,
     },
+    buyerName: {
+      type: String,
+      required: true,
+    },
     planId:{
       type: String,
       required: true,
