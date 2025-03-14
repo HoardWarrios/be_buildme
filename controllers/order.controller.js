@@ -5,15 +5,17 @@ import Plan from "../models/plan.model.js";
 import User from "../models/user.model.js";
 import Stripe from "stripe";
 
+// create a payment intent for an order
 export const intent = async (req, res, next) => {
-  const stripe = new Stripe(process.env.STRIPE);
+  const stripe = new Stripe(process.env.STRIPE);//  Stripe key
 
-  // const gig = await Gig.findById(req.params.id);
+  // find the plan and related gig using the plan ID from request parameters
   const plan = await Plan.findById(req.params.id);//Get plan info from id in params
   const gig = await Gig.findById(plan.gigId);//Get gig info from gigid in plan
   const user = await User.findById(plan.userId);//Get user info from userId in plan
   const builder = await User.findById(gig.userId);//Get user info from userId in gig
 
+  // createStripe payment with the gig price
   const paymentIntent = await stripe.paymentIntents.create({
     amount: gig.price * 100,
     currency: "usd",
@@ -37,7 +39,7 @@ export const intent = async (req, res, next) => {
   });
 
   await newOrder.save();
-
+// return the Stripe client secret so the frontend can proceed with payment
   res.status(200).send({
     clientSecret: paymentIntent.client_secret,//sending payment intent client secret
   });
@@ -49,7 +51,7 @@ export const getOrders = async (req, res, next) => {
     const orders = await Order.find({
       // If request seller give seller id : else give buyer id
       ...(req.isSeller ? { sellerId: req.userId } : { buyerId: req.userId }),
-      isCompleted: true,
+      isCompleted: true,// Only return completed orders
     });
 
     res.status(200).send(orders);
@@ -58,16 +60,16 @@ export const getOrders = async (req, res, next) => {
   }
 };
 
-// FUNCTION FOR COMPLETED PAYMENT
+// FUNCTION FOR SUCCESSFUL PAYMENT
 export const confirm = async (req, res, next) => {
   try {
     const orders = await Order.findOneAndUpdate(
       {
-        payment_intent: req.body.payment_intent,
+        payment_intent: req.body.payment_intent,// find order by payment intent
       },
       {
         $set: {
-          isCompleted: true,
+          isCompleted: true,// send confirmation response
         },
       }
     );
